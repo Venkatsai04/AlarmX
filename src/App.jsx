@@ -9,14 +9,12 @@ const App = () => {
     const Hours = now.getHours().toString()
     const Minutes = now.getMinutes().toString()
     const Seconds = now.getSeconds().toString()
-
     const timeNow = `${Hours.length == 2? Hours: '0' + Hours}:${Minutes.length == 2? Minutes: '0' + Minutes}:${Seconds.length == 2? Seconds: '0' + Seconds}`
-
     return timeNow
   }
 
   setInterval(() => {
-    console.log(getCurrTime());
+    // console.log(getCurrTime());
     setTime(getCurrTime())
   }, 1000);
 
