@@ -9,7 +9,7 @@ const App = () => {
     const Hours = now.getHours().toString()
     const Minutes = now.getMinutes().toString()
     const Seconds = now.getSeconds().toString()
-    const timeNow = `${Hours.length == 2 ? Hours : '0' + Hours}:${Minutes.length == 2 ? Minutes : '0' + Minutes}:${Seconds.length == 2 ? Seconds : '0' + Seconds}`
+    const timeNow = `${Hours.length == 2 ? Hours : '0' + Hours}:${Minutes.length == 2 ? Minutes : '0' + Minutes}`
     return timeNow
   }
 
@@ -44,7 +44,7 @@ const App = () => {
             </div>
           </div>
 
-          <h1 className="text-white text-[32px] font-bold px-4 text-center pb-3 pt-6">10:30 AM</h1>
+          <h1 className="text-white text-[32px] font-bold px-4 text-center pb-3 pt-6">{Time}</h1>
 
           {["7:00 AM", "8:00 AM", "9:00 AM"].map((time, i) => (
             <div
