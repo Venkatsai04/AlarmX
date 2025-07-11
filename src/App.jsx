@@ -3,14 +3,27 @@ import React, { useState } from 'react'
 const App = () => {
 
   const [Time, setTime] = useState()
-  const [Alarms, setAlarms] = useState(["7:00 AM", "8:00 AM", "9:00 AM"])
+  const [Alarms, setAlarms] = useState([
+    {
+      time: "7:00 AM",
+      note: "wake"
+    },
+    {
+      time: "9:00 AM",
+      note: "Bot"
+    },
+    {
+      time: "10:00 AM",
+      note: "Bot wake"
+    },
+  ])
 
   const getCurrTime = () => {
     const now = new Date()
     const Hours = now.getHours().toString()
     const Minutes = now.getMinutes().toString()
-    // const Seconds = now.getSeconds().toString()
-    const timeNow = `${Hours.length == 2 ? Hours : '0' + Hours}:${Minutes.length == 2 ? Minutes : '0' + Minutes}`
+    const Seconds = now.getSeconds().toString()
+    const timeNow = `${Hours.length == 2 ? Hours : '0' + Hours}:${Minutes.length == 2 ? Minutes : '0' + Minutes}:${Seconds.length == 2 ? Seconds : '0' + Seconds}`
     return timeNow
   }
 
@@ -25,7 +38,7 @@ const App = () => {
         style={{ fontFamily: '"Space Grotesk", "Noto Sans", sans-serif' }}
       >
         <div>
-          <div className="flex items-center bg-[#141a1f] p-4 pb-2 justify-between">
+          <div className="flex items-center bg-[#141a1f] p-6 pb-2 justify-between">
             <h2 className="text-white text-lg font-bold">Alarm<span className='text-yellow-300'>X</span></h2>
             <div className=" w-12 ">
               <button className=" h-12 rounded-full text-white">
@@ -41,13 +54,14 @@ const App = () => {
 
           <h1 className="text-white text-[32px] font-bold px-4 text-center pb-3 pt-6">{Time}</h1>
 
-          {Alarms.map((time, i) => (
+          {Alarms.map((alarm, i) => (
             <div
               key={i}
               className="flex items-center gap-4 bg-[#141a1f] px-4 min-h-[72px] py-2 justify-around"
             >
               <div className="flex flex-col justify-center">
-                <p className="text-white text-base font-medium">{time}</p>
+                <p className="text-white text-base font-medium">{alarm.time}</p>
+                <p className="text-yellow-300 text-base font-small">{alarm.note}</p>
                 <p className="text-[#9daebe] text-sm">Mon, Tue, Wed, Thu, Fri</p>
               </div>
               <div className="shrink-0">
