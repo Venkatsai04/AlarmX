@@ -2,13 +2,14 @@ import React, { useState } from 'react'
 
 const App = () => {
 
-  const [Time, setTime] = useState(0)
+  const [Time, setTime] = useState()
+  const [Alarms, setAlarms] = useState(["7:00 AM", "8:00 AM", "9:00 AM"])
 
   const getCurrTime = () => {
     const now = new Date()
     const Hours = now.getHours().toString()
     const Minutes = now.getMinutes().toString()
-    const Seconds = now.getSeconds().toString()
+    // const Seconds = now.getSeconds().toString()
     const timeNow = `${Hours.length == 2 ? Hours : '0' + Hours}:${Minutes.length == 2 ? Minutes : '0' + Minutes}`
     return timeNow
   }
@@ -25,19 +26,13 @@ const App = () => {
       >
         <div>
           <div className="flex items-center bg-[#141a1f] p-4 pb-2 justify-between">
-            <div className="text-white flex size-12 shrink-0 items-center">
-              {/* Gear Icon */}
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 256 256">
-                <path d="M128,80a48,48..." />
-              </svg>
-            </div>
-            <h2 className="text-white text-lg font-bold flex-1 text-center">AlarmX</h2>
-            <div className="flex w-12 items-center justify-end">
-              <button className="flex h-12 items-center justify-center rounded-full text-white">
+            <h2 className="text-white text-lg font-bold">Alarm<span className='text-yellow-300'>X</span></h2>
+            <div className=" w-12 ">
+              <button className=" h-12 rounded-full text-white">
                 <div className="text-white">
-                  {/* Plus Icon */}
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 256 256">
-                    <path d="M224,128a8..." />
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M20 22V20C20 18.9391 19.5786 17.9217 18.8284 17.1716C18.0783 16.4214 17.0609 16 16 16H8C6.93913 16 5.92172 16.4214 5.17157 17.1716C4.42143 17.9217 4 18.9391 4 20V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                   </svg>
                 </div>
               </button>
@@ -46,10 +41,10 @@ const App = () => {
 
           <h1 className="text-white text-[32px] font-bold px-4 text-center pb-3 pt-6">{Time}</h1>
 
-          {["7:00 AM", "8:00 AM", "9:00 AM"].map((time, i) => (
+          {Alarms.map((time, i) => (
             <div
               key={i}
-              className="flex items-center gap-4 bg-[#141a1f] px-4 min-h-[72px] py-2 justify-between"
+              className="flex items-center gap-4 bg-[#141a1f] px-4 min-h-[72px] py-2 justify-around"
             >
               <div className="flex flex-col justify-center">
                 <p className="text-white text-base font-medium">{time}</p>
@@ -68,27 +63,6 @@ const App = () => {
           ))}
         </div>
 
-        <div>
-          <div className="flex gap-2 border-t border-[#2b3640] bg-[#1f272e] px-4 pb-3 pt-2">
-            <a className="flex flex-1 flex-col items-center text-white" href="#">
-              <div className="flex h-8 items-center justify-center">
-                {/* User Icon */}
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 256 256">
-                  <path d="M230.93,220..." />
-                </svg>
-              </div>
-            </a>
-            <a className="flex flex-1 flex-col items-center text-[#9daebe]" href="#">
-              <div className="flex h-8 items-center justify-center">
-                {/* Android Icon */}
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 256 256">
-                  <path d="M176,156a12..." />
-                </svg>
-              </div>
-            </a>
-          </div>
-          <div className="h-5 bg-[#1f272e]"></div>
-        </div>
       </div>
     </>
   )
