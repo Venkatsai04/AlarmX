@@ -57,7 +57,7 @@ const App = () => {
           {Alarms.map((alarm, i) => (
             <div
               key={i}
-              className="flex items-center gap-4 bg-[#141a1f] px-4 min-h-[72px] py-2 justify-around"
+              className="flex items-center gap-4 bg-[#141a1f] px-4 min-h-[72px] py-2 justify-around scale-110"
             >
               <div className="flex flex-col justify-center">
                 <p className="text-white text-base font-medium">{alarm.time}</p>
