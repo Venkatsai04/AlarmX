@@ -39,7 +39,7 @@ const App = () => {
       >
         <div>
           <div className="flex items-center bg-[#141a1f] p-6 pb-2 justify-between">
-            <h2 className="text-white text-lg font-bold">Alarm<span className='text-yellow-300'>X</span></h2>
+            <h2 className="text-white text-lg font-bold ml-[32px] text-[25px] ">Alarm<span className='text-yellow-300'>X</span></h2>
             <div className=" w-12 ">
               <button className=" h-12 rounded-full text-white">
                 <div className="text-white">
