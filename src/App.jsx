@@ -16,6 +16,30 @@ const App = () => {
       time: "10:00 AM",
       note: "Bot wake"
     },
+    {
+      time: "7:00 AM",
+      note: "wake"
+    },
+    {
+      time: "9:00 AM",
+      note: "Bot"
+    },
+    {
+      time: "10:00 AM",
+      note: "Bot wake"
+    },
+    {
+      time: "7:00 AM",
+      note: "wake"
+    },
+    {
+      time: "9:00 AM",
+      note: "Bot"
+    },
+    {
+      time: "10:00 AM",
+      note: "Bot wake"
+    },
   ])
 
   const getCurrTime = () => {
@@ -52,12 +76,12 @@ const App = () => {
             </div>
           </div>
 
-          <h1 className="text-white text-[32px] font-bold px-4 text-center pb-3 pt-6">{Time}</h1>
+          <h1 className="text-white text-[40px] font-bold px-4 text-center pb-3 pt-6">{Time}</h1>
 
           {Alarms.map((alarm, i) => (
             <div
               key={i}
-              className="flex items-center gap-4 bg-[#0a0029] px-4 min-h-[72px] py-2 justify-around scale-110"
+              className="flex items-center gap-4 bg-[#0a0029] px-4 min-h-[72px] py-2 justify-around "
             >
               <div className="flex flex-col justify-center">
                 <p className="text-white text-base font-medium">{alarm.time}</p>
@@ -77,10 +101,10 @@ const App = () => {
           ))}
         </div>
 
-        <div className='flex items-center justify-center mb-12'>
+        <div className='flex items-center justify-center mb-12 mt-10 '>
           <button
             // onClick={onClick}
-            className="flex items-center scale-110 justify-center w-12 h-12 rounded-full bg-yellow-300 text-black text-2xl hover:bg-blue-700 transition-colors"
+            className="flex items-center scale-105 justify-center w-12 h-12 rounded-full bg-yellow-300 text-black text-2xl hover:bg-blue-700 transition-colors"
             aria-label="Add"
           >
             <svg
