@@ -2,45 +2,23 @@ import React, { useState } from 'react'
 
 const App = () => {
 
+  const [showDialog, setShowDialog] = useState(false);
+  const [newTime, setNewTime] = useState('');
+  const [newNote, setNewNote] = useState('');
+  const [repeatDays, setRepeatDays] = useState([]);
+
   const [Time, setTime] = useState()
-  const [Alarms, setAlarms] = useState([
+  const [AlarmsList, setAlarmsList] = useState([
     {
       time: "7:00 AM",
       note: "wake"
     },
-    {
-      time: "9:00 AM",
-      note: "Bot"
-    },
-    {
-      time: "10:00 AM",
-      note: "Bot wake"
-    },
-    {
-      time: "7:00 AM",
-      note: "wake"
-    },
-    {
-      time: "9:00 AM",
-      note: "Bot"
-    },
-    {
-      time: "10:00 AM",
-      note: "Bot wake"
-    },
-    {
-      time: "7:00 AM",
-      note: "wake"
-    },
-    {
-      time: "9:00 AM",
-      note: "Bot"
-    },
-    {
-      time: "10:00 AM",
-      note: "Bot wake"
-    },
+
   ])
+
+  const setAlarm = () => {
+
+  }
 
   const getCurrTime = () => {
     const now = new Date()
@@ -78,50 +56,120 @@ const App = () => {
 
           <h1 className="text-white text-[40px] font-bold px-4 text-center pb-3 pt-6">{Time}</h1>
 
-         <div className='h-[60vh] overflow-y-auto'>
-           {Alarms.map((alarm, i) => (
-            <div
-              key={i}
-              className="flex items-center gap-4 bg-[#0a0029] px-4 min-h-[72px] py-2 justify-around overflow-y-auto"
-            >
-              <div className="flex flex-col justify-center">
-                <p className="text-white text-base font-medium">{alarm.time}</p>
-                <p className="text-yellow-300 text-base font-small">{alarm.note}</p>
-                <p className="text-[#9daebe] text-sm">Mon, Tue, Wed, Thu, Fri</p>
+          <div className='h-[60vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700'>
+            {AlarmsList.map((alarm, i) => (
+              <div
+                key={i}
+                className="flex items-center gap-4 bg-[#0a0029] px-4 min-h-[72px] py-2 justify-around overflow-y-auto"
+              >
+                <div className="flex flex-col justify-center">
+                  <p className="text-white text-base font-medium">{alarm.time}</p>
+                  <p className="text-yellow-300 text-base font-small">{alarm.note}</p>
+                  <p className="text-[#9daebe] text-sm">Mon, Tue, Wed, Thu, Fri</p>
+                </div>
+                <div className="shrink-0">
+                  <label className="relative flex h-[31px] w-[51px] cursor-pointer items-center rounded-full bg-[#2b3640] p-0.5 has-[:checked]:justify-end has-[:checked]:bg-yellow-300">
+                    <div
+                      className="h-full w-[27px] rounded-full bg-white"
+                      style={{ boxShadow: "rgba(0, 0, 0, 0.15) 0px 3px 8px, rgba(0, 0, 0, 0.06) 0px 3px 1px" }}
+                    ></div>
+                    <input type="checkbox" className="invisible absolute" />
+                  </label>
+                </div>
               </div>
-              <div className="shrink-0">
-                <label className="relative flex h-[31px] w-[51px] cursor-pointer items-center rounded-full bg-[#2b3640] p-0.5 has-[:checked]:justify-end has-[:checked]:bg-[#dce8f3]">
-                  <div
-                    className="h-full w-[27px] rounded-full bg-white"
-                    style={{ boxShadow: "rgba(0, 0, 0, 0.15) 0px 3px 8px, rgba(0, 0, 0, 0.06) 0px 3px 1px" }}
-                  ></div>
-                  <input type="checkbox" className="invisible absolute" />
-                </label>
-              </div>
-            </div>
-          ))}
-         </div>
+            ))}
+          </div>
         </div>
 
-        <div className='flex items-center justify-center mb-12 mt-10 '>
+        <div className="flex items-center justify-center mb-12 mt-4">
           <button
-            // onClick={onClick}
-            className="flex items-center scale-105 justify-center w-12 h-12 rounded-full bg-yellow-300 text-black text-2xl hover:bg-blue-700 transition-colors"
-            aria-label="Add"
+            onClick={() => setShowDialog(true)}
+            className="w-12 h-12 flex items-center justify-center bg-yellow-300 rounded-full hover:bg-blue-700 transition"
           >
-            <svg
-              className="w-6 h-6"
-              fill="currentColor"
-              viewBox="0 0 256 256"
-              xmlns="http://www.w3.org/2000/svg"
-            >
+            <svg className="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 256 256">
               <path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z" />
             </svg>
           </button>
         </div>
 
 
+
       </div>
+
+      {showDialog && (
+        <div className="mt-3 fixed inset-0 bg-transparent bg-opacity-60 flex items-center justify-center z-50">
+          <div className="bg-transparent backdrop-blur-2xl rounded-xl p-6 w-80 space-y-4 shadow-lg">
+            <h2 className="text-xl font-bold text-center text-white">New Alarm</h2>
+
+            <label className="block ">
+              <span className="text-sm font-semibold text-white">Time</span>
+              <input
+                type="time"
+                value={newTime}
+                
+                onChange={(e) => setNewTime(e.target.value)}
+                className="w-full mt-1 p-2 border rounded bg-white"
+              />
+            </label>
+
+            <label className="block ">
+              <span className="text-sm font-semibold text-white">Note</span>
+              <input
+                type="text"
+                value={newNote}
+                onChange={(e) => setNewNote(e.target.value)}
+                className="w-full mt-1 p-2 border rounded bg-white"
+                placeholder="E.g. Wake up"
+              />
+            </label>
+
+            <div>
+              <span className="text-sm font-semibold block mb-2 text-white">Repeat</span>
+              <div className="grid grid-cols-4 gap-2">
+                {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
+                  <button
+                    key={day}
+                    type="button"
+                    onClick={() =>
+                      setRepeatDays((prev) =>
+                        prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
+                      )
+                    }
+                    className={`px-2 py-1 text-sm rounded-full ${repeatDays.includes(day) ? 'bg-blue-700 text-white' : 'bg-gray-200'
+                      }`}
+                  >
+                    {day}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-4">
+              <button onClick={() => setShowDialog(false)} className="text-gray-500 hover:underline">
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  if (newTime) {
+                    setAlarmsList((prev) => [
+                      ...prev,
+                      { time: newTime, note: newNote || 'Alarm', days: repeatDays },
+                    ]);
+                    setShowDialog(false);
+                    setNewTime('');
+                    setNewNote('');
+                    setRepeatDays([]);
+                  }
+                }}
+                className="bg-yellow-300 px-4 py-2 rounded text-black font-semibold hover:bg-blue-700 hover:text-white"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </>
   )
 }
