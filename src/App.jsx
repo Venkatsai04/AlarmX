@@ -10,9 +10,10 @@ const App = () => {
   const [Time, setTime] = useState()
   const [AlarmsList, setAlarmsList] = useState([
     {
-      time: "7:00 AM",
-      note: "wake"
-    },
+      time: "08:00",
+      note: "Workout",
+      days: ["Mon", "Wed", "Fri"]
+    }
 
   ])
 
@@ -65,7 +66,10 @@ const App = () => {
                 <div className="flex flex-col justify-center">
                   <p className="text-white text-base font-medium">{alarm.time}</p>
                   <p className="text-yellow-300 text-base font-small">{alarm.note}</p>
-                  <p className="text-[#9daebe] text-sm">Mon, Tue, Wed, Thu, Fri</p>
+                  <p className="text-[#9daebe] text-sm w-25 overflow-x-auto [&::-webkit-scrollbar]:h-2 text-nowrap">
+                    {alarm.days?.length > 0 ? (alarm.days.length != 7 ? alarm.days.join(', ') : 'Everyday' ) : 'No repeat'}
+                  </p>
+
                 </div>
                 <div className="shrink-0">
                   <label className="relative flex h-[31px] w-[51px] cursor-pointer items-center rounded-full bg-[#2b3640] p-0.5 has-[:checked]:justify-end has-[:checked]:bg-yellow-300">
@@ -98,7 +102,7 @@ const App = () => {
 
       {showDialog && (
         <div className="mt-3 fixed inset-0 bg-transparent bg-opacity-60 flex items-center justify-center z-50">
-          <div className="bg-transparent backdrop-blur-2xl rounded-xl p-6 w-80 space-y-4 shadow-lg">
+          <div className="bg-transparent backdrop-blur-xl rounded-xl p-6 w-80 space-y-4 shadow-amber-50">
             <h2 className="text-xl font-bold text-center text-white">New Alarm</h2>
 
             <label className="block ">
@@ -106,7 +110,7 @@ const App = () => {
               <input
                 type="time"
                 value={newTime}
-                
+
                 onChange={(e) => setNewTime(e.target.value)}
                 className="w-full mt-1 p-2 border rounded bg-white"
               />
@@ -153,14 +157,21 @@ const App = () => {
                   if (newTime) {
                     setAlarmsList((prev) => [
                       ...prev,
-                      { time: newTime, note: newNote || 'Alarm', days: repeatDays },
+                      {
+                        time: newTime,
+                        note: newNote || 'Alarm',
+                        days: [...repeatDays],
+                      },
                     ]);
+
+                    // Clear fields after saving
                     setShowDialog(false);
                     setNewTime('');
                     setNewNote('');
                     setRepeatDays([]);
                   }
                 }}
+
                 className="bg-yellow-300 px-4 py-2 rounded text-black font-semibold hover:bg-blue-700 hover:text-white"
               >
                 Save
