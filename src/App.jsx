@@ -10,7 +10,7 @@ const App = () => {
   const [Time, setTime] = useState()
   const [AlarmsList, setAlarmsList] = useState([
     {
-      time: "08:00",
+      time: "23:35:00",
       note: "Workout",
       days: ["Mon", "Wed", "Fri"]
     }
@@ -18,8 +18,16 @@ const App = () => {
   ])
 
   const setAlarm = () => {
-
+    let timeNow = new Date().toLocaleTimeString()
+    console.log(timeNow);
+    
+    if(AlarmsList.time == timeNow){
+      console.log('beep!');
+      
+    }
   }
+
+  // setAlarm()
 
   const getCurrTime = () => {
     const now = new Date()
