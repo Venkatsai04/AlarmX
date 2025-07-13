@@ -34,12 +34,12 @@ const App = () => {
   return (
     <>
       <div
-        className="relative flex min-h-screen flex-col bg-[#141a1f] justify-between overflow-x-hidden"
+        className="relative flex min-h-screen flex-col bg-[#0a0029] justify-between overflow-x-hidden"
         style={{ fontFamily: '"Space Grotesk", "Noto Sans", sans-serif' }}
       >
         <div>
-          <div className="flex items-center bg-[#141a1f] p-6 pb-2 justify-between">
-            <h2 className="text-white text-lg font-bold ml-[32px] text-[25px] ">Alarm<span className='text-yellow-300'>X</span></h2>
+          <div className="flex items-center bg-[#0a0029] p-6 pb-2 justify-between">
+            <h2 className="text-white text-lg font-bold ml-[25px] text-[25px] ">Alarm<span className='text-yellow-300'>X</span></h2>
             <div className=" w-12 ">
               <button className=" h-12 rounded-full text-white">
                 <div className="text-white">
@@ -57,7 +57,7 @@ const App = () => {
           {Alarms.map((alarm, i) => (
             <div
               key={i}
-              className="flex items-center gap-4 bg-[#141a1f] px-4 min-h-[72px] py-2 justify-around scale-110"
+              className="flex items-center gap-4 bg-[#0a0029] px-4 min-h-[72px] py-2 justify-around scale-110"
             >
               <div className="flex flex-col justify-center">
                 <p className="text-white text-base font-medium">{alarm.time}</p>
@@ -77,8 +77,21 @@ const App = () => {
           ))}
         </div>
 
-        <div>
-         <button>sSet</button>
+        <div className='flex items-center justify-center mb-12'>
+          <button
+            // onClick={onClick}
+            className="flex items-center scale-110 justify-center w-12 h-12 rounded-full bg-yellow-300 text-black text-2xl hover:bg-blue-700 transition-colors"
+            aria-label="Add"
+          >
+            <svg
+              className="w-6 h-6"
+              fill="currentColor"
+              viewBox="0 0 256 256"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z" />
+            </svg>
+          </button>
         </div>
 
 
