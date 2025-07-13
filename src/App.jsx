@@ -78,10 +78,11 @@ const App = () => {
 
           <h1 className="text-white text-[40px] font-bold px-4 text-center pb-3 pt-6">{Time}</h1>
 
-          {Alarms.map((alarm, i) => (
+         <div className='h-[60vh] overflow-y-auto'>
+           {Alarms.map((alarm, i) => (
             <div
               key={i}
-              className="flex items-center gap-4 bg-[#0a0029] px-4 min-h-[72px] py-2 justify-around "
+              className="flex items-center gap-4 bg-[#0a0029] px-4 min-h-[72px] py-2 justify-around overflow-y-auto"
             >
               <div className="flex flex-col justify-center">
                 <p className="text-white text-base font-medium">{alarm.time}</p>
@@ -99,6 +100,7 @@ const App = () => {
               </div>
             </div>
           ))}
+         </div>
         </div>
 
         <div className='flex items-center justify-center mb-12 mt-10 '>
