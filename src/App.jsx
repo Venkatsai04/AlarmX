@@ -27,9 +27,13 @@ const App = () => {
         const Minutes = now.getMinutes().toString().padStart(2, '0');
         const timeNow = `${Hours}:${Minutes}`;
 
-        AlrmQueue.forEach(alarm => {
+        AlrmQueue.forEach((alarm, index) => {
           if (alarm.time === timeNow) {
-            setIsAlarmRunning(true)
+            setIsAlarmRunning(true);
+
+            // Remove the triggered alarm
+            setAlrmQueue(prev => prev.filter((_, i) => i !== index));
+
             console.log("🔔 Alarm:", alarm.note);
           }
         });
@@ -211,7 +215,25 @@ const App = () => {
         </div>
       )}
 
-      <div className='fixed z-[50000] w-10 h-10 bg-amber-50'></div>
+      {
+        IsAlarmRunning && (
+          <div className='fixed inset-0 z-[50000] bg-white flex items-center justify-center'>
+            <div className='text-center'>
+              <h1 className='text-3xl font-bold mb-4'>⏰</h1>
+              <h1 className='text-xl font-bold mb-4'></h1>
+              <button
+                onClick={() => setIsAlarmRunning(false)}
+                className='px-6 py-3 bg-yellow-300 text-black font-semibold rounded-lg hover:bg-red-700 transition'
+              >
+                Stop Alarm
+              </button>
+            </div>
+          </div>
+        )
+      }
+
+
+
 
     </>
   )
