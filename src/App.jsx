@@ -6,24 +6,27 @@ const App = () => {
   const [newTime, setNewTime] = useState('');
   const [newNote, setNewNote] = useState('');
   const [repeatDays, setRepeatDays] = useState([]);
+  // const [AlrmQueue, setAlrmQueue] = useState([])
 
   const [Time, setTime] = useState()
   const [AlarmsList, setAlarmsList] = useState([
     {
-      time: "23:35:00",
+      time: "22:33:00",
       note: "Workout",
       days: ["Mon", "Wed", "Fri"]
     }
 
   ])
 
-  const setAlarm = () => {
-    let timeNow = new Date().toLocaleTimeString()
-    console.log(timeNow);
-    
-    if(AlarmsList.time == timeNow){
-      console.log('beep!');
+  const setAlarm = (alrmTime, cause) => {
+    if(alrmTime){
+      const timeNow = new Date().toLocaleTimeString()
+      console.log('alarm set on ', alrmTime);
+      console.log(alrmTime, timeNow);
       
+      if(timeNow.toString() == alrmTime.toString()){
+        console.log(cause);
+      }
     }
   }
 
@@ -80,12 +83,12 @@ const App = () => {
 
                 </div>
                 <div className="shrink-0">
-                  <label className="relative flex h-[31px] w-[51px] cursor-pointer items-center rounded-full bg-[#2b3640] p-0.5 has-[:checked]:justify-end has-[:checked]:bg-yellow-300">
+                  <label  className="relative flex h-[31px] w-[51px] cursor-pointer items-center rounded-full bg-[#2b3640] p-0.5 has-[:checked]:justify-end has-[:checked]:bg-yellow-300">
                     <div
                       className="h-full w-[27px] rounded-full bg-white"
                       style={{ boxShadow: "rgba(0, 0, 0, 0.15) 0px 3px 8px, rgba(0, 0, 0, 0.06) 0px 3px 1px" }}
                     ></div>
-                    <input type="checkbox" className="invisible absolute" />
+                    <input onClick={() => setAlarm(alarm.time, alarm.note)}  type="checkbox" className="invisible absolute" />
                   </label>
                 </div>
               </div>
