@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, {useRef, useEffect, useState } from 'react'
 
 const App = () => {
+
+  const alarmSoundRef = useRef(new Audio('/alarm.wav'));
+  // alarmSound.loop = true
 
   const [showDialog, setShowDialog] = useState(false);
   const [newTime, setNewTime] = useState('');
@@ -30,10 +33,8 @@ const App = () => {
         AlrmQueue.forEach((alarm, index) => {
           if (alarm.time === timeNow) {
             setIsAlarmRunning(true);
-
-            // Remove the triggered alarm
+            alarmSoundRef.current.play();
             setAlrmQueue(prev => prev.filter((_, i) => i !== index));
-
             console.log("🔔 Alarm:", alarm.note);
           }
         });
@@ -51,9 +52,6 @@ const App = () => {
     }
   };
 
-
-
-  // setAlarm()
 
   const getCurrTime = () => {
     const now = new Date()
@@ -222,13 +220,19 @@ const App = () => {
               <h1 className='text-3xl font-bold mb-4'>⏰</h1>
               <h1 className='text-xl font-bold mb-4'></h1>
               <button
-                onClick={() => setIsAlarmRunning(false)}
+                onClick={() => {
+                  setIsAlarmRunning(false)
+                  alarmSoundRef.current.pause();
+                  alarmSoundRef.current.currentTime = 0;
+                }
+
+                }
                 className='px-6 py-3 bg-yellow-300 text-black font-semibold rounded-lg hover:bg-red-700 transition'
               >
                 Stop Alarm
               </button>
             </div>
-          </div>
+          </div >
         )
       }
 
