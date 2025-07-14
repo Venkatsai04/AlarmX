@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 const App = () => {
 
@@ -6,7 +6,8 @@ const App = () => {
   const [newTime, setNewTime] = useState('');
   const [newNote, setNewNote] = useState('');
   const [repeatDays, setRepeatDays] = useState([]);
-  // const [AlrmQueue, setAlrmQueue] = useState([])
+  const [AlrmQueue, setAlrmQueue] = useState([])
+  const [IsAlarmRunning, setIsAlarmRunning] = useState(false)
 
   const [Time, setTime] = useState()
   const [AlarmsList, setAlarmsList] = useState([
@@ -18,17 +19,35 @@ const App = () => {
 
   ])
 
-  const setAlarm = (alrmTime, cause) => {
-    if(alrmTime){
-      const timeNow = new Date().toLocaleTimeString()
-      console.log('alarm set on ', alrmTime);
-      console.log(alrmTime, timeNow);
-      
-      if(timeNow.toString() == alrmTime.toString()){
-        console.log(cause);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (AlrmQueue.length > 0) {
+        const now = new Date();
+        const Hours = now.getHours().toString().padStart(2, '0');
+        const Minutes = now.getMinutes().toString().padStart(2, '0');
+        const timeNow = `${Hours}:${Minutes}`;
+
+        AlrmQueue.forEach(alarm => {
+          if (alarm.time === timeNow) {
+            setIsAlarmRunning(true)
+            console.log("🔔 Alarm:", alarm.note);
+          }
+        });
       }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [AlrmQueue]);
+
+
+  const setAlarm = (alrmTime, cause) => {
+    if (alrmTime && cause) {
+      setAlrmQueue(prev => [...prev, { time: alrmTime, note: cause }]);
+      console.log("Alarm set on", alrmTime);
     }
-  }
+  };
+
+
 
   // setAlarm()
 
@@ -78,17 +97,17 @@ const App = () => {
                   <p className="text-white text-base font-medium">{alarm.time}</p>
                   <p className="text-yellow-300 text-base font-small">{alarm.note}</p>
                   <p className="text-[#9daebe] text-sm w-25 overflow-x-auto [&::-webkit-scrollbar]:h-2 text-nowrap">
-                    {alarm.days?.length > 0 ? (alarm.days.length != 7 ? alarm.days.join(', ') : 'Everyday' ) : 'No repeat'}
+                    {alarm.days?.length > 0 ? (alarm.days.length != 7 ? alarm.days.join(', ') : 'Everyday') : 'No repeat'}
                   </p>
 
                 </div>
                 <div className="shrink-0">
-                  <label  className="relative flex h-[31px] w-[51px] cursor-pointer items-center rounded-full bg-[#2b3640] p-0.5 has-[:checked]:justify-end has-[:checked]:bg-yellow-300">
+                  <label className="relative flex h-[31px] w-[51px] cursor-pointer items-center rounded-full bg-[#2b3640] p-0.5 has-[:checked]:justify-end has-[:checked]:bg-yellow-300">
                     <div
                       className="h-full w-[27px] rounded-full bg-white"
                       style={{ boxShadow: "rgba(0, 0, 0, 0.15) 0px 3px 8px, rgba(0, 0, 0, 0.06) 0px 3px 1px" }}
                     ></div>
-                    <input onClick={() => setAlarm(alarm.time, alarm.note)}  type="checkbox" className="invisible absolute" />
+                    <input onClick={() => setAlarm(alarm.time, alarm.note)} type="checkbox" className="invisible absolute" />
                   </label>
                 </div>
               </div>
@@ -112,7 +131,7 @@ const App = () => {
       </div>
 
       {showDialog && (
-        <div className="mt-3 fixed inset-0 bg-transparent bg-opacity-60 flex items-center justify-center z-50">
+        <div className="mt-3 fixed inset-0 bg-transparent bg-opacity-60 flex items-center justify-center z-40">
           <div className="bg-transparent backdrop-blur-xl rounded-xl p-6 w-80 space-y-4 shadow-amber-50">
             <h2 className="text-xl font-bold text-center text-white">New Alarm</h2>
 
@@ -191,6 +210,8 @@ const App = () => {
           </div>
         </div>
       )}
+
+      <div className='fixed z-[50000] w-10 h-10 bg-amber-50'></div>
 
     </>
   )
