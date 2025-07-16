@@ -97,7 +97,7 @@ const App = () => {
               >
                 <div className="flex flex-col justify-center">
                   <p className="text-white text-base font-medium">{alarm.time}</p>
-                  <p className="text-yellow-300 text-base font-small">{alarm.note}</p>
+                  <p className="text-yellow-300 text-base w-25 overflow-x-auto font-small text-nowrap">{alarm.note}</p>
                   <p className="text-[#9daebe] text-sm w-25 overflow-x-auto [&::-webkit-scrollbar]:h-2 text-nowrap">
                     {alarm.days?.length > 0 ? (alarm.days.length != 7 ? alarm.days.join(', ') : 'Everyday') : 'No repeat'}
                   </p>
