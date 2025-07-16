@@ -5,7 +5,6 @@ const App = () => {
   const alarmSoundRef = useRef(new Audio('/alarm.wav'));
   // alarmSound.loop = true
 
-  const [IsAlarmSet, setIsAlarmSet] = useState(false)
   const [showDialog, setShowDialog] = useState(false);
   const [newTime, setNewTime] = useState('');
   const [newNote, setNewNote] = useState('');
@@ -15,11 +14,14 @@ const App = () => {
 
   const [Time, setTime] = useState()
   const [AlarmsList, setAlarmsList] = useState([
-   { time: "8:00", note: "Meeting", days: ["Mon", "Tue", "Wed"], isActive: false }
-  ]);
+    {
+      time: "22:33:00",
+      note: "Workout",
+      days: ["Mon", "Wed", "Fri"]
+    }
 
+  ])
 
-  //play alarm
   useEffect(() => {
     const interval = setInterval(() => {
       if (AlrmQueue.length > 0) {
@@ -43,29 +45,14 @@ const App = () => {
   }, [AlrmQueue]);
 
 
-  //set alarm
-  const toggleAlarm = (index) => {
-    setAlarmsList(prev => {
-      const updated = [...prev];
-      updated[index].isActive = !updated[index].isActive;
-
-      if (updated[index].isActive) {
-        setAlrmQueue(queue => [...queue, {
-          time: updated[index].time,
-          note: updated[index].note
-        }]);
-      } else {
-        // Remove from queue
-        setAlrmQueue(queue => queue.filter(q => q.time !== updated[index].time));
-      }
-
-      return updated;
-    });
+  const setAlarm = (alrmTime, cause) => {
+    if (alrmTime && cause) {
+      setAlrmQueue(prev => [...prev, { time: alrmTime, note: cause }]);
+      console.log("Alarm set on", alrmTime);
+    }
   };
 
 
-
-  // get time 
   const getCurrTime = () => {
     const now = new Date()
     const Hours = now.getHours().toString()
@@ -123,10 +110,17 @@ const App = () => {
                       style={{ boxShadow: "rgba(0, 0, 0, 0.15) 0px 3px 8px, rgba(0, 0, 0, 0.06) 0px 3px 1px" }}
                     ></div>
                     <input
-                      className="invisible absolute"
                       type="checkbox"
-                      checked={alarm.isActive}
-                      onChange={() => toggleAlarm(i)}
+                      checked={AlrmQueue.some(a => a.time === alarm.time)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setAlarm(alarm.time, alarm.note);
+                        } else {
+                          // Remove alarm from queue if unchecked
+                          setAlrmQueue(prev => prev.filter(a => a.time !== alarm.time));
+                        }
+                      }}
+                      className="invisible absolute"
                     />
 
                   </label>
