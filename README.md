@@ -63,14 +63,18 @@ Technologies to be used:
 git clone https://github.com/Venkatsai04/Alarmx.git
 cd alarmx
 ```
-
-
-Install dependencies
+### 2 .Install dependencies
+```bash
 npm install
-Run the development server
+```
+### 3.Run the development server
+```bash
 npm run dev
-Build for production
+```
+### 4.Build for production
+```bash
 npm run build
+```
 
 
 
