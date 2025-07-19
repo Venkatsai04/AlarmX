@@ -3,7 +3,6 @@ import React, { useRef, useEffect, useState } from 'react'
 const App = () => {
 
   const alarmSoundRef = useRef(new Audio('/alarm.wav'));
-  // alarmSound.loop = true
 
   const [showDialog, setShowDialog] = useState(false);
   const [newTime, setNewTime] = useState('');
@@ -116,7 +115,7 @@ const App = () => {
                         if (e.target.checked) {
                           setAlarm(alarm.time, alarm.note);
                         } else {
-                          // Remove alarm from queue if unchecked
+            
                           setAlrmQueue(prev => prev.filter(a => a.time !== alarm.time));
                         }
                       }}
@@ -209,7 +208,7 @@ const App = () => {
                       },
                     ]);
 
-                    // Clear fields after saving
+                  
                     setShowDialog(false);
                     setNewTime('');
                     setNewNote('');
