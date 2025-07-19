@@ -53,6 +53,13 @@ const App = () => {
     }
   };
 
+  const handleVerifiedStop = () => {
+    setIsAlarmRunning(false);
+    alarmSoundRef.current.pause();
+    alarmSoundRef.current.currentTime = 0;
+  };
+
+
 
   const getCurrTime = () => {
     const now = new Date()
@@ -66,7 +73,7 @@ const App = () => {
   useEffect(() => {
     const now = new Date()
     const Hours = now.getHours().toString()
-    if(Hours > 4 && Hours < 9){
+    if (Hours > 4 && Hours < 9) {
       // setIsMorning(true)
     }
   }, [IsAlarmRunning])
@@ -251,11 +258,9 @@ const App = () => {
                 }
                 className='px-6 py-3 bg-yellow-300 text-black font-semibold rounded-lg hover:bg-red-700 transition'
               >
-                {/* <FaceTime/> */}
-                {
-                  IsMorning ? 'Verify to stop' : 'stop alarm'
-                }
               </button>
+              <FaceTime IsMorning={IsMorning} stopAlarm={handleVerifiedStop} />
+
             </div>
           </div >
         )
