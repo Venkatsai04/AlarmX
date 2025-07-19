@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react'
+import FaceTime from './components/FaceTime';
 
 const App = () => {
 
@@ -10,6 +11,7 @@ const App = () => {
   const [repeatDays, setRepeatDays] = useState([]);
   const [AlrmQueue, setAlrmQueue] = useState([])
   const [IsAlarmRunning, setIsAlarmRunning] = useState(false)
+  const [IsMorning, setIsMorning] = useState(true)
 
   const [Time, setTime] = useState()
   const [AlarmsList, setAlarmsList] = useState([
@@ -60,6 +62,15 @@ const App = () => {
     const timeNow = `${Hours.length == 2 ? Hours : '0' + Hours}:${Minutes.length == 2 ? Minutes : '0' + Minutes}:${Seconds.length == 2 ? Seconds : '0' + Seconds}`
     return timeNow
   }
+
+  useEffect(() => {
+    const now = new Date()
+    const Hours = now.getHours().toString()
+    if(Hours > 4 && Hours < 9){
+      // setIsMorning(true)
+    }
+  }, [IsAlarmRunning])
+
 
   setInterval(() => {
     setTime(getCurrTime())
@@ -115,7 +126,7 @@ const App = () => {
                         if (e.target.checked) {
                           setAlarm(alarm.time, alarm.note);
                         } else {
-            
+
                           setAlrmQueue(prev => prev.filter(a => a.time !== alarm.time));
                         }
                       }}
@@ -208,7 +219,7 @@ const App = () => {
                       },
                     ]);
 
-                  
+
                     setShowDialog(false);
                     setNewTime('');
                     setNewNote('');
@@ -237,11 +248,13 @@ const App = () => {
                   alarmSoundRef.current.pause();
                   alarmSoundRef.current.currentTime = 0;
                 }
-
                 }
                 className='px-6 py-3 bg-yellow-300 text-black font-semibold rounded-lg hover:bg-red-700 transition'
               >
-                Stop Alarm
+                {/* <FaceTime/> */}
+                {
+                  IsMorning ? 'Verify to stop' : 'stop alarm'
+                }
               </button>
             </div>
           </div >
