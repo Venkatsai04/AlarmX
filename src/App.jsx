@@ -13,6 +13,9 @@ const App = () => {
   const [IsAlarmRunning, setIsAlarmRunning] = useState(false)
   const [IsMorning, setIsMorning] = useState(true)
 
+  const [showFaceTime, setShowFaceTime] = useState(true); 
+  
+
   const [Time, setTime] = useState()
   const [AlarmsList, setAlarmsList] = useState([
     {
@@ -58,7 +61,7 @@ const App = () => {
     alarmSoundRef.current.pause();
     alarmSoundRef.current.currentTime = 0;
   };
-
+  
 
   const getCurrTime = () => {
     const now = new Date()
