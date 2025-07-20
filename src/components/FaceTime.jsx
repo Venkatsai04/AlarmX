@@ -92,14 +92,12 @@ const FaceTime = ({stopAlarm}) => {
   return (
     <div className="flex flex-col items-center mt-4">
       <h2 className="text-xl font-bold mb-4">Face Verification</h2>
-
       <video
         ref={videoRef}
         autoPlay
         playsInline
         className="w-64 h-48 border border-gray-400 rounded"
       />
-
       <button
         onClick={handleVerify}
         className="mt-4 px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
