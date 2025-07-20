@@ -1,118 +1,96 @@
-// FaceSleepVerifier.jsx
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from "react";
 
-const FaceSleepVerifier = ({ onVerified, threshold = 30 }) => {
+const FaceTime = () => {
   const videoRef = useRef(null);
-  const canvasRef = useRef(null);
-  const [previewURL, setPreviewURL] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState(null);
-  const [error, setError] = useState('');
-  const [stream, setStream] = useState(null);
+  const [isVideoReady, setIsVideoReady] = useState(false);
 
-  const startCamera = async () => {
-    setError('');
-    try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
-      setStream(mediaStream);
-      if (videoRef.current) {
-        videoRef.current.srcObject = mediaStream;
+  useEffect(() => {
+    // Ask camera permission on load
+    const startCamera = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          videoRef.current.onloadedmetadata = () => {
+            videoRef.current.play();
+            setIsVideoReady(true);
+            console.log("✅ Camera ready");
+          };
+        }
+      } catch (err) {
+        console.error("❌ Camera access error:", err);
       }
-    } catch (err) {
-      setError('Camera access denied.');
+    };
+
+    startCamera();
+  }, []);
+
+  const handleVerify = async () => {
+    console.log("🟢 Verify button clicked");
+
+    const video = videoRef.current;
+    if (!video || video.videoWidth === 0) {
+      alert("Video not ready yet!");
+      return;
     }
-  };
 
-  const stopCamera = () => {
-    if (stream) {
-      stream.getTracks().forEach((track) => track.stop());
-      setStream(null);
-    }
-  };
+    const canvas = document.createElement("canvas");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(video, 0, 0);
 
-  const takePhoto = () => {
-    if (!videoRef.current) return;
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    canvas.width = videoRef.current.videoWidth;
-    canvas.height = videoRef.current.videoHeight;
-    ctx.drawImage(videoRef.current, 0, 0);
-    canvas.toBlob((blob) => {
-      setPreviewURL(URL.createObjectURL(blob));
-      analyzePhoto(blob);
-      stopCamera();
-    }, 'image/jpeg', 0.95);
-  };
+    const blob = await new Promise(resolve =>
+      canvas.toBlob(resolve, "image/jpeg", 0.95)
+    );
 
-  const analyzePhoto = async (blob) => {
-    setLoading(true);
-    setError('');
-    setResult(null);
+    const formData = new FormData();
+    formData.append("image", blob, "snapshot.jpg");
+    formData.append("analysisType", "sleepiness"); // ✅ IMPORTANT LINE
+
     try {
-      const formData = new FormData();
-      formData.append('image', blob, 'capture.jpg');
-      formData.append('type', 'sleepiness');
-
-      const res = await fetch('http://localhost:3000/upload-and-analyze', {
-        method: 'POST',
+      const response = await fetch("http://localhost:3000/upload-and-analyze", {
+        method: "POST",
         body: formData,
       });
-      const data = await res.json();
 
-      if (data?.success && data.result) {
-        setResult(data.result);
-        if (data.result.sleepiness <= threshold) {
-          onVerified(); // STOP ALARM HERE
-        }
+      const result = await response.json();
+      console.log("✅ Verification result:", result);
+
+      if (result.success) {
+        console.log("User is awake enough: ", result);
+        // Optionally stop alarm or give pass
       } else {
-        setError(data?.message || 'Invalid response');
+        console.warn("Verification failed: ", result.message);
+        // 🔊 Do not stop alarm
       }
-    } catch (err) {
-      setError('Network error');
+    } catch (error) {
+      console.error("❌ Verification error:", error);
     }
-    setLoading(false);
   };
 
+
+
   return (
-    <div className="p-4 bg-white rounded-xl shadow-md w-full max-w-md mx-auto">
-      <h2 className="text-xl font-bold mb-4 text-center">Sleepiness Verification</h2>
-      {error && <p className="text-red-600 text-sm mb-2">{error}</p>}
+    <div className="flex flex-col items-center mt-4">
+      <h2 className="text-xl font-bold mb-4">Face Verification</h2>
 
-      {!stream && (
-        <button onClick={startCamera} className="button-secondary w-full mb-4">
-          Start Camera
-        </button>
-      )}
+      <video
+        ref={videoRef}
+        autoPlay
+        playsInline
+        className="w-64 h-48 border border-gray-400 rounded"
+      />
 
-      {stream && (
-        <>
-          <video ref={videoRef} autoPlay playsInline className="rounded-lg shadow-md w-full mb-4" />
-          <button onClick={takePhoto} className="button-primary w-full mb-4">
-            Take Photo & Analyze
-          </button>
-        </>
-      )}
-
-      {previewURL && (
-        <img src={previewURL} alt="Preview" className="rounded-lg shadow-md w-full mb-4" />
-      )}
-
-      {loading && <p className="text-blue-600 text-center">Analyzing...</p>}
-
-      {result && (
-        <div className="bg-gray-100 p-4 rounded-lg shadow-sm">
-          <p>
-            <strong>Sleepy:</strong> {result.sleepy ? 'Yes' : 'No'}
-          </p>
-          <p>
-            <strong>Sleepiness:</strong> {result.sleepiness} / 100
-          </p>
-        </div>
-      )}
-
-      <canvas ref={canvasRef} className="hidden"></canvas>
+      <button
+        onClick={handleVerify}
+        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
+        disabled={!isVideoReady}
+      >
+        Verify Face
+      </button>
     </div>
   );
 };
 
-export default FaceSleepVerifier;
+export default FaceTime;
