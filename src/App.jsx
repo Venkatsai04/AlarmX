@@ -60,7 +60,6 @@ const App = () => {
   };
 
 
-
   const getCurrTime = () => {
     const now = new Date()
     const Hours = now.getHours().toString()
@@ -248,23 +247,23 @@ const App = () => {
           <div className='fixed inset-0 z-[50000] bg-white flex items-center justify-center'>
             <div className='text-center'>
               <h1 className='text-3xl font-bold mb-4'>⏰</h1>
-              <h1 className='text-xl font-bold mb-4'></h1>
-              <button
-                onClick={() => {
-                  setIsAlarmRunning(false)
-                  alarmSoundRef.current.pause();
-                  alarmSoundRef.current.currentTime = 0;
-                }
-                }
-                className='px-6 py-3 bg-yellow-300 text-black font-semibold rounded-lg hover:bg-red-700 transition'
-              >
-              </button>
-              <FaceTime IsMorning={IsMorning} stopAlarm={handleVerifiedStop} />
 
+              {/* ✅ Only show FaceTime if it's morning */}
+              {IsMorning ? (
+                <FaceTime IsMorning={IsMorning} stopAlarm={handleVerifiedStop} />
+              ) : (
+                <button
+                  onClick={handleVerifiedStop}
+                  className='px-6 py-3 bg-yellow-300 text-black font-semibold rounded-lg hover:bg-red-700 transition'
+                >
+                  Stop Alarm
+                </button>
+              )}
             </div>
-          </div >
+          </div>
         )
       }
+
     </>
   )
 }

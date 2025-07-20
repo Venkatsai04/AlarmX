@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 
-const FaceTime = () => {
+const FaceTime = ({stopAlarm}) => {
   const videoRef = useRef(null);
   const [isVideoReady, setIsVideoReady] = useState(false);
+  const [IsVerified, setIsVerified] = useState(false)
+  const [Isloading, setIsloading] = useState(false)
 
   useEffect(() => {
     // Ask camera permission on load
@@ -45,8 +47,11 @@ const FaceTime = () => {
     );
 
     const formData = new FormData();
-    formData.append("image", blob, "snapshot.jpg");
-    formData.append("analysisType", "sleepiness"); // ✅ IMPORTANT LINE
+    // formData.append("image", blob, "snapshot.jpg");
+    // formData.append("analysisType", "sleepiness"); 
+
+    formData.append('image', blob, 'captured_image.jpeg');
+    formData.append('type', 'sleepiness');
 
     try {
       const response = await fetch("http://localhost:3000/upload-and-analyze", {
@@ -58,7 +63,11 @@ const FaceTime = () => {
       console.log("✅ Verification result:", result);
 
       if (result.success) {
-        console.log("User is awake enough: ", result);
+        console.log(result);
+        if(result.sleepiness > 60 && result.sleepy){
+          setIsVerified(true)
+          // stopAlarm();
+        }
         // Optionally stop alarm or give pass
       } else {
         console.warn("Verification failed: ", result.message);
@@ -68,6 +77,15 @@ const FaceTime = () => {
       console.error("❌ Verification error:", error);
     }
   };
+
+  useEffect(() => {
+    if(IsVerified){
+      console.log('verified');
+      
+      stopAlarm()
+    }
+  }, [IsVerified])
+  
 
 
 
