@@ -13,7 +13,7 @@ const App = () => {
   const [IsAlarmRunning, setIsAlarmRunning] = useState(false)
   const [IsMorning, setIsMorning] = useState(true)
 
-  const [showFaceTime, setShowFaceTime] = useState(true); 
+  // const [showFaceTime, setShowFaceTime] = useState(true); 
   
 
   const [Time, setTime] = useState()

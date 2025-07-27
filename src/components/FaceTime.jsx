@@ -1,13 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 
-const FaceTime = ({stopAlarm}) => {
+const FaceTime = ({ stopAlarm }) => {
   const videoRef = useRef(null);
   const [isVideoReady, setIsVideoReady] = useState(false);
-  const [IsVerified, setIsVerified] = useState(false)
-  const [Isloading, setIsloading] = useState(false)
+  const [isVerified, setIsVerified] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // Ask camera permission on load
     const startCamera = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -47,11 +46,10 @@ const FaceTime = ({stopAlarm}) => {
     );
 
     const formData = new FormData();
-    // formData.append("image", blob, "snapshot.jpg");
-    // formData.append("analysisType", "sleepiness"); 
+    formData.append("image", blob, "captured_image.jpeg");
+    formData.append("type", "sleepiness");
 
-    formData.append('image', blob, 'captured_image.jpeg');
-    formData.append('type', 'sleepiness');
+    setIsLoading(true);
 
     try {
       const response = await fetch("http://localhost:3000/upload-and-analyze", {
@@ -63,31 +61,29 @@ const FaceTime = ({stopAlarm}) => {
       console.log("✅ Verification result:", result);
 
       if (result.success) {
-        console.log(result);
-        if(result.sleepiness > 60 && result.sleepy){
-          setIsVerified(true)
-          // stopAlarm();
+        if (result.sleepiness > 60 && result.sleepy) {
+          setIsVerified(true);
+        } else {
+          alert("You don't look sleepy enough! 😅");
         }
-        // Optionally stop alarm or give pass
       } else {
         console.warn("Verification failed: ", result.message);
-        // 🔊 Do not stop alarm
+        alert("Verification failed.");
       }
     } catch (error) {
       console.error("❌ Verification error:", error);
+      alert("Something went wrong.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    if(IsVerified){
-      console.log('verified');
-      
-      stopAlarm()
+    if (isVerified) {
+      console.log("✅ Face Verified");
+      stopAlarm();
     }
-  }, [IsVerified])
-  
-
-
+  }, [isVerified]);
 
   return (
     <div className="flex flex-col items-center mt-4">
@@ -98,13 +94,18 @@ const FaceTime = ({stopAlarm}) => {
         playsInline
         className="w-64 h-48 border border-gray-400 rounded"
       />
-      <button
-        onClick={handleVerify}
-        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
-        disabled={!isVideoReady}
-      >
-        Verify Face
-      </button>
+
+      {!isVerified ? (
+        <button
+          onClick={handleVerify}
+          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
+          disabled={!isVideoReady || isLoading}
+        >
+          {isLoading ? "Verifying..." : "Verify Face"}
+        </button>
+      ) : (
+        <div className="mt-4 text-green-600 font-bold text-lg">Good morning 😄</div>
+      )}
     </div>
   );
 };
