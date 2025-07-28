@@ -78,13 +78,14 @@ const App = () => {
   };
 
   useEffect(() => {
-    const now = new Date();
-    const Hours = now.getHours();
-    if (Hours >= 4 && Hours < 12) {
-      setIsMorning(true);
-    } else {
-      setIsMorning(false);
-    }
+    // const now = new Date();
+    // const Hours = now.getHours();
+    // if (Hours >= 4 && Hours < 12) {
+    //   setIsMorning(true);
+    // } else {
+    //   setIsMorning(false);
+    // }
+    setIsMorning(true)
   }, [IsAlarmRunning]);
 
   useEffect(() => {
