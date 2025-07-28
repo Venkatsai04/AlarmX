@@ -19,7 +19,7 @@
 
 ---
 
-## 📸 Upcoming AI Integration
+## 📸 AI Integration
 
 🚀 **Sleepy Face Detection with AI (Planned)**  
 We are working on integrating an **AI-based facial detection module** that can identify a sleepy face via webcam and trigger an alarm dynamically. This will help users avoid oversleeping or dozing off during work/study sessions.
