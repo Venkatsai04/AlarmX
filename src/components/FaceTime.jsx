@@ -5,6 +5,7 @@ const FaceTime = ({ stopAlarm }) => {
   const [isVideoReady, setIsVideoReady] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [verificationStatus, setVerificationStatus] = useState(""); // Renamed for clarity
 
   useEffect(() => {
     const startCamera = async () => {
@@ -15,23 +16,30 @@ const FaceTime = ({ stopAlarm }) => {
           videoRef.current.onloadedmetadata = () => {
             videoRef.current.play();
             setIsVideoReady(true);
-            console.log("✅ Camera ready");
+            setVerificationStatus("Camera ready. Click 'Verify Face'."); // Initial status
           };
         }
       } catch (err) {
-        console.error("❌ Camera access error:", err);
+        console.error("Camera access error:", err);
+        setVerificationStatus("Camera access denied or error. Please allow camera access."); // Error status
       }
     };
 
     startCamera();
+
+    return () => {
+      if (videoRef.current && videoRef.current.srcObject) {
+        const stream = videoRef.current.srcObject;
+        const tracks = stream.getTracks();
+        tracks.forEach(track => track.stop());
+      }
+    };
   }, []);
 
   const handleVerify = async () => {
-    console.log("🟢 Verify button clicked");
-
     const video = videoRef.current;
     if (!video || video.videoWidth === 0) {
-      alert("Video not ready yet!");
+      setVerificationStatus("Video not ready yet! Please wait.");
       return;
     }
 
@@ -50,40 +58,37 @@ const FaceTime = ({ stopAlarm }) => {
     formData.append("type", "sleepiness");
 
     setIsLoading(true);
+    setVerificationStatus("Verifying your face..."); // Status during verification
 
     try {
       const response = await fetch("http://localhost:3000/upload-and-analyze", {
         method: "POST",
         body: formData,
       });
-
       const result = await response.json();
-      console.log("✅ Verification result:", result);
 
       if (result.success) {
-        if (result.sleepiness > 60 && result.sleepy) {
+        if (result.result.sleepiness < 50) {
+          // User is verified and not sleepy
           setIsVerified(true);
+          setVerificationStatus("Good morning! You're all set. Alarm stopping...");
+          // Set a timeout before stopping the alarm
+          setTimeout(() => {
+            stopAlarm();
+          }, 2000); // 2-second delay
         } else {
-          alert("You don't look sleepy enough! 😅");
+          // User is detected as sleepy
+          setVerificationStatus("You're still sleepy! 😴 Wash your face or try again.");
         }
       } else {
-        console.warn("Verification failed: ", result.message);
-        alert("Verification failed.");
+        setVerificationStatus("Verification failed. Please try again.");
       }
     } catch (error) {
-      console.error("❌ Verification error:", error);
-      alert("Something went wrong.");
+      setVerificationStatus("Something went wrong during verification. Please check your server.");
     } finally {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (isVerified) {
-      console.log("✅ Face Verified");
-      stopAlarm();
-    }
-  }, [isVerified]);
 
   return (
     <div className="flex flex-col items-center mt-4">
@@ -95,6 +100,8 @@ const FaceTime = ({ stopAlarm }) => {
         className="w-64 h-48 border border-gray-400 rounded"
       />
 
+      <p className="mt-2 text-white-700 text-sm italic">{verificationStatus}</p> {/* Display status here */}
+
       {!isVerified ? (
         <button
           onClick={handleVerify}
@@ -104,7 +111,8 @@ const FaceTime = ({ stopAlarm }) => {
           {isLoading ? "Verifying..." : "Verify Face"}
         </button>
       ) : (
-        <div className="mt-4 text-green-600 font-bold text-lg">Good morning 😄</div>
+        // This message will briefly show before the screen exits due to stopAlarm()
+        <div className="mt-4 text-green-600 font-bold text-lg"></div>
       )}
     </div>
   );

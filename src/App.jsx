@@ -1,58 +1,62 @@
-import React, { useRef, useEffect, useState } from 'react'
+import React, { useRef, useEffect, useState } from 'react';
 import FaceTime from './components/FaceTime';
 
 const App = () => {
-
   const alarmSoundRef = useRef(new Audio('/alarm.wav'));
 
   const [showDialog, setShowDialog] = useState(false);
   const [newTime, setNewTime] = useState('');
   const [newNote, setNewNote] = useState('');
   const [repeatDays, setRepeatDays] = useState([]);
-  const [AlrmQueue, setAlrmQueue] = useState([])
-  const [IsAlarmRunning, setIsAlarmRunning] = useState(false)
-  const [IsMorning, setIsMorning] = useState(true)
+  const [AlrmQueue, setAlrmQueue] = useState([]);
+  const [IsAlarmRunning, setIsAlarmRunning] = useState(false);
+  const [IsMorning, setIsMorning] = useState(true);
 
-  // const [showFaceTime, setShowFaceTime] = useState(true); 
-  
-
-  const [Time, setTime] = useState()
+  const [Time, setTime] = useState();
   const [AlarmsList, setAlarmsList] = useState([
     {
-      time: "22:33:00",
-      note: "Workout",
-      days: ["Mon", "Wed", "Fri"]
+      time: "13:42:00", // Changed for testing current time (1:42 PM IST)
+      note: "Wake Up Call",
+      days: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] // Everyday for easier testing
     }
-
-  ])
+  ]);
 
   useEffect(() => {
+    // Set the audio to loop once when the component mounts or when ref changes
+    if (alarmSoundRef.current) {
+      alarmSoundRef.current.loop = true;
+    }
+
     const interval = setInterval(() => {
-      if (AlrmQueue.length > 0) {
+      if (!IsAlarmRunning && AlrmQueue.length > 0) { // Only check if no alarm is currently running
         const now = new Date();
         const Hours = now.getHours().toString().padStart(2, '0');
         const Minutes = now.getMinutes().toString().padStart(2, '0');
         const timeNow = `${Hours}:${Minutes}`;
+        const currentDay = now.toLocaleString('en-US', { weekday: 'short' });
 
-        AlrmQueue.forEach((alarm, index) => {
-          if (alarm.time === timeNow) {
+        AlrmQueue.forEach((alarm) => {
+          const alarmDays = alarm.days || [];
+          const alarmTimeWithoutSeconds = alarm.time.substring(0, 5);
+          const shouldTrigger = alarmDays.length === 0 || alarmDays.includes(currentDay);
+
+          if (alarmTimeWithoutSeconds === timeNow && shouldTrigger) {
             setIsAlarmRunning(true);
             alarmSoundRef.current.play();
-            setAlrmQueue(prev => prev.filter((_, i) => i !== index));
-            console.log("🔔 Alarm:", alarm.note);
+            // IMPORTANT: Do NOT remove from AlrmQueue here.
+            // It will only stop when handleVerifiedStop is called.
           }
         });
       }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [AlrmQueue]);
+  }, [AlrmQueue, IsAlarmRunning]); // Add IsAlarmRunning to dependencies
 
-
-  const setAlarm = (alrmTime, cause) => {
-    if (alrmTime && cause) {
-      setAlrmQueue(prev => [...prev, { time: alrmTime, note: cause }]);
-      console.log("Alarm set on", alrmTime);
+  const setAlarm = (alarmObject) => {
+    if (alarmObject && alarmObject.time && alarmObject.note) {
+      const alarmWithDays = { ...alarmObject, days: alarmObject.days || [] };
+      setAlrmQueue(prev => [...prev, alarmWithDays]);
     }
   };
 
@@ -60,30 +64,35 @@ const App = () => {
     setIsAlarmRunning(false);
     alarmSoundRef.current.pause();
     alarmSoundRef.current.currentTime = 0;
+
   };
-  
 
   const getCurrTime = () => {
-    const now = new Date()
-    const Hours = now.getHours().toString()
-    const Minutes = now.getMinutes().toString()
-    const Seconds = now.getSeconds().toString()
-    const timeNow = `${Hours.length == 2 ? Hours : '0' + Hours}:${Minutes.length == 2 ? Minutes : '0' + Minutes}:${Seconds.length == 2 ? Seconds : '0' + Seconds}`
-    return timeNow
-  }
+    const now = new Date();
+    const Hours = now.getHours().toString();
+    const Minutes = now.getMinutes().toString();
+    const Seconds = now.getSeconds().toString();
+    const timeNow = `${Hours.length === 2 ? Hours : '0' + Hours}:${Minutes.length === 2 ? Minutes : '0' + Minutes}:${Seconds.length === 2 ? Seconds : '0' + Seconds}`;
+    return timeNow;
+  };
 
   useEffect(() => {
-    const now = new Date()
-    const Hours = now.getHours().toString()
-    if (Hours > 4 && Hours < 9) {
-      // setIsMorning(true)
-    }
-  }, [IsAlarmRunning])
+    // const now = new Date();
+    // const Hours = now.getHours();
+    // if (Hours >= 4 && Hours < 12) {
+    //   setIsMorning(true);
+    // } else {
+    //   setIsMorning(false);
+    // }
+    setIsMorning(true);
+  }, [IsAlarmRunning]);
 
-
-  setInterval(() => {
-    setTime(getCurrTime())
-  }, 1000);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime(getCurrTime());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <>
@@ -98,8 +107,8 @@ const App = () => {
               <button className=" h-12 rounded-full text-white">
                 <div className="text-white">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                    <path d="M20 22V20C20 18.9391 19.5786 17.9217 18.8284 17.1716C18.0783 16.4214 17.0609 16 16 16H8C6.93913 16 5.92172 16.4214 5.17157 17.1716C4.42143 17.9217 4 18.9391 4 20V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d="M20 22V20C20 18.9391 19.5786 17.9217 18.8284 17.1716C18.0783 16.4214 17.0609 16 16 16H8C6.93913 16 5.92172 16.4214 5.17157 17.1716C4.42143 17.9217 4 18.9391 4 20V22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </div>
               </button>
@@ -118,9 +127,8 @@ const App = () => {
                   <p className="text-white text-base font-medium">{alarm.time}</p>
                   <p className="text-yellow-300 text-base w-25 overflow-x-auto font-small text-nowrap">{alarm.note}</p>
                   <p className="text-[#9daebe] text-sm w-25 overflow-x-auto [&::-webkit-scrollbar]:h-2 text-nowrap">
-                    {alarm.days?.length > 0 ? (alarm.days.length != 7 ? alarm.days.join(', ') : 'Everyday') : 'No repeat'}
+                    {(alarm.days && alarm.days.length > 0) ? (alarm.days.length !== 7 ? alarm.days.join(', ') : 'Everyday') : 'No repeat'}
                   </p>
-
                 </div>
                 <div className="shrink-0">
                   <label className="relative flex h-[31px] w-[51px] cursor-pointer items-center rounded-full bg-[#2b3640] p-0.5 has-[:checked]:justify-end has-[:checked]:bg-yellow-300">
@@ -130,18 +138,16 @@ const App = () => {
                     ></div>
                     <input
                       type="checkbox"
-                      checked={AlrmQueue.some(a => a.time === alarm.time)}
+                      checked={AlrmQueue.some(a => a.time === alarm.time && a.note === alarm.note)}
                       onChange={(e) => {
                         if (e.target.checked) {
-                          setAlarm(alarm.time, alarm.note);
+                          setAlarm(alarm);
                         } else {
-
-                          setAlrmQueue(prev => prev.filter(a => a.time !== alarm.time));
+                          setAlrmQueue(prev => prev.filter(a => !(a.time === alarm.time && a.note === alarm.note)));
                         }
                       }}
                       className="invisible absolute"
                     />
-
                   </label>
                 </div>
               </div>
@@ -159,9 +165,6 @@ const App = () => {
             </svg>
           </button>
         </div>
-
-
-
       </div>
 
       {showDialog && (
@@ -174,7 +177,6 @@ const App = () => {
               <input
                 type="time"
                 value={newTime}
-
                 onChange={(e) => setNewTime(e.target.value)}
                 className="w-full mt-1 p-2 border rounded bg-white"
               />
@@ -227,15 +229,12 @@ const App = () => {
                         days: [...repeatDays],
                       },
                     ]);
-
-
                     setShowDialog(false);
                     setNewTime('');
                     setNewNote('');
                     setRepeatDays([]);
                   }
                 }}
-
                 className="bg-yellow-300 px-4 py-2 rounded text-black font-semibold hover:bg-blue-700 hover:text-white"
               >
                 Save
@@ -250,10 +249,8 @@ const App = () => {
           <div className='fixed inset-0 z-[50000] bg-white flex items-center justify-center'>
             <div className='text-center'>
               <h1 className='text-3xl font-bold mb-4'>⏰</h1>
-
-              {/* ✅ Only show FaceTime if it's morning */}
               {IsMorning ? (
-                <FaceTime IsMorning={IsMorning} stopAlarm={handleVerifiedStop} />
+                <FaceTime stopAlarm={handleVerifiedStop} />
               ) : (
                 <button
                   onClick={handleVerifiedStop}
@@ -266,9 +263,8 @@ const App = () => {
           </div>
         )
       }
-
     </>
-  )
-}
+  );
+};
 
-export default App
+export default App;
