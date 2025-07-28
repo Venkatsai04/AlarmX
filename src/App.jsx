@@ -5,7 +5,7 @@ const App = () => {
   const alarmSoundRef = useRef(new Audio('/alarm.wav'));
 
   const [showDialog, setShowDialog] = useState(false);
-  const [newTime, setNewTime] = useState('');
+  const [newTime, setNewTime] = useState(''); // This will still be HH:MM from the input
   const [newNote, setNewNote] = useState('');
   const [repeatDays, setRepeatDays] = useState([]);
   const [AlrmQueue, setAlrmQueue] = useState([]);
@@ -15,47 +15,49 @@ const App = () => {
   const [Time, setTime] = useState();
   const [AlarmsList, setAlarmsList] = useState([
     {
-      time: "13:42:00", // Changed for testing current time (1:42 PM IST)
+      time: "13:42:05", // Example: Set with seconds
       note: "Wake Up Call",
-      days: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] // Everyday for easier testing
+      days: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     }
   ]);
 
   useEffect(() => {
-    // Set the audio to loop once when the component mounts or when ref changes
     if (alarmSoundRef.current) {
       alarmSoundRef.current.loop = true;
     }
 
     const interval = setInterval(() => {
-      if (!IsAlarmRunning && AlrmQueue.length > 0) { // Only check if no alarm is currently running
+      if (!IsAlarmRunning && AlrmQueue.length > 0) {
         const now = new Date();
         const Hours = now.getHours().toString().padStart(2, '0');
         const Minutes = now.getMinutes().toString().padStart(2, '0');
-        const timeNow = `${Hours}:${Minutes}`;
+        const Seconds = now.getSeconds().toString().padStart(2, '0'); // Get seconds
+        const timeNow = `${Hours}:${Minutes}:${Seconds}`; // Full HH:MM:SS
         const currentDay = now.toLocaleString('en-US', { weekday: 'short' });
 
         AlrmQueue.forEach((alarm) => {
           const alarmDays = alarm.days || [];
-          const alarmTimeWithoutSeconds = alarm.time.substring(0, 5);
+          // Ensure alarm.time always has seconds for direct comparison
+          const fullAlarmTime = alarm.time.length === 5 ? `${alarm.time}:00` : alarm.time; // Add seconds if missing
+
           const shouldTrigger = alarmDays.length === 0 || alarmDays.includes(currentDay);
 
-          if (alarmTimeWithoutSeconds === timeNow && shouldTrigger) {
+          if (fullAlarmTime === timeNow && shouldTrigger) { // Compare full HH:MM:SS
             setIsAlarmRunning(true);
             alarmSoundRef.current.play();
-            // IMPORTANT: Do NOT remove from AlrmQueue here.
-            // It will only stop when handleVerifiedStop is called.
           }
         });
       }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [AlrmQueue, IsAlarmRunning]); // Add IsAlarmRunning to dependencies
+  }, [AlrmQueue, IsAlarmRunning]);
 
   const setAlarm = (alarmObject) => {
     if (alarmObject && alarmObject.time && alarmObject.note) {
-      const alarmWithDays = { ...alarmObject, days: alarmObject.days || [] };
+      // Ensure the time string always includes seconds when adding to queue
+      const timeWithSeconds = alarmObject.time.length === 5 ? `${alarmObject.time}:00` : alarmObject.time;
+      const alarmWithDays = { ...alarmObject, time: timeWithSeconds, days: alarmObject.days || [] };
       setAlrmQueue(prev => [...prev, alarmWithDays]);
     }
   };
@@ -64,27 +66,25 @@ const App = () => {
     setIsAlarmRunning(false);
     alarmSoundRef.current.pause();
     alarmSoundRef.current.currentTime = 0;
-
   };
 
   const getCurrTime = () => {
     const now = new Date();
-    const Hours = now.getHours().toString();
-    const Minutes = now.getMinutes().toString();
-    const Seconds = now.getSeconds().toString();
-    const timeNow = `${Hours.length === 2 ? Hours : '0' + Hours}:${Minutes.length === 2 ? Minutes : '0' + Minutes}:${Seconds.length === 2 ? Seconds : '0' + Seconds}`;
+    const Hours = now.getHours().toString().padStart(2, '0'); // padStart for 2 digits
+    const Minutes = now.getMinutes().toString().padStart(2, '0');
+    const Seconds = now.getSeconds().toString().padStart(2, '0');
+    const timeNow = `${Hours}:${Minutes}:${Seconds}`;
     return timeNow;
   };
 
   useEffect(() => {
-    // const now = new Date();
-    // const Hours = now.getHours();
-    // if (Hours >= 4 && Hours < 12) {
-    //   setIsMorning(true);
-    // } else {
-    //   setIsMorning(false);
-    // }
-    setIsMorning(true);
+    const now = new Date();
+    const Hours = now.getHours();
+    if (Hours >= 4 && Hours < 12) {
+      setIsMorning(true);
+    } else {
+      setIsMorning(false);
+    }
   }, [IsAlarmRunning]);
 
   useEffect(() => {
@@ -124,7 +124,7 @@ const App = () => {
                 className="flex items-center gap-4 bg-[#0a0029] px-4 min-h-[72px] py-2 justify-around overflow-y-auto"
               >
                 <div className="flex flex-col justify-center">
-                  <p className="text-white text-base font-medium">{alarm.time}</p>
+                  <p className="text-white text-base font-medium">{alarm.time}</p> {/* Now displays HH:MM:SS */}
                   <p className="text-yellow-300 text-base w-25 overflow-x-auto font-small text-nowrap">{alarm.note}</p>
                   <p className="text-[#9daebe] text-sm w-25 overflow-x-auto [&::-webkit-scrollbar]:h-2 text-nowrap">
                     {(alarm.days && alarm.days.length > 0) ? (alarm.days.length !== 7 ? alarm.days.join(', ') : 'Everyday') : 'No repeat'}
@@ -174,12 +174,14 @@ const App = () => {
 
             <label className="block ">
               <span className="text-sm font-semibold text-white">Time</span>
+              {/* Keep type="time" but clarify its HH:MM nature */}
               <input
                 type="time"
                 value={newTime}
                 onChange={(e) => setNewTime(e.target.value)}
                 className="w-full mt-1 p-2 border rounded bg-white"
               />
+               <p className="text-xs text-gray-400 mt-1">Alarm will set at :00 seconds (e.g., 12:30:00)</p>
             </label>
 
             <label className="block ">
@@ -221,10 +223,13 @@ const App = () => {
               <button
                 onClick={() => {
                   if (newTime) {
+                    // When saving, ensure newTime includes seconds, defaulting to :00
+                    const timeWithSeconds = newTime.length === 5 ? `${newTime}:00` : newTime;
+
                     setAlarmsList((prev) => [
                       ...prev,
                       {
-                        time: newTime,
+                        time: timeWithSeconds, // Save with seconds
                         note: newNote || 'Alarm',
                         days: [...repeatDays],
                       },
