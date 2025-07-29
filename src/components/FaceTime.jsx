@@ -61,7 +61,7 @@ const FaceTime = ({ stopAlarm }) => {
     setVerificationStatus("Verifying your face..."); // Status during verification
 
     try {
-      const response = await fetch("http://localhost:3000/upload-and-analyze", {
+      const response = await fetch("https://alarmx-backend.vercel.app/upload-and-analyze", {
         method: "POST",
         body: formData,
       });
