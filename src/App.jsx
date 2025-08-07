@@ -5,22 +5,24 @@ const App = () => {
   const alarmSoundRef = useRef(new Audio('/alarm.wav'));
 
   const [showDialog, setShowDialog] = useState(false);
-  const [newTime, setNewTime] = useState(''); // This will still be HH:MM from the input
+  const [newTime, setNewTime] = useState(''); 
   const [newNote, setNewNote] = useState('');
   const [repeatDays, setRepeatDays] = useState([]);
   const [AlrmQueue, setAlrmQueue] = useState([]);
   const [IsAlarmRunning, setIsAlarmRunning] = useState(false);
-  const [IsMorning, setIsMorning] = useState(true);
+  const [IsMorning, setIsMorning] = useState(false);
 
   const [Time, setTime] = useState();
   const [AlarmsList, setAlarmsList] = useState([
     {
-      time: "13:42:05", // Example: Set with seconds
+      time: "13:42:05", 
       note: "Wake Up Call",
       days: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     }
   ]);
 
+
+  //stop alarm
   useEffect(() => {
     if (alarmSoundRef.current) {
       alarmSoundRef.current.loop = true;
@@ -31,18 +33,18 @@ const App = () => {
         const now = new Date();
         const Hours = now.getHours().toString().padStart(2, '0');
         const Minutes = now.getMinutes().toString().padStart(2, '0');
-        const Seconds = now.getSeconds().toString().padStart(2, '0'); // Get seconds
-        const timeNow = `${Hours}:${Minutes}:${Seconds}`; // Full HH:MM:SS
+        const Seconds = now.getSeconds().toString().padStart(2, '0'); 
+        const timeNow = `${Hours}:${Minutes}:${Seconds}`; 
         const currentDay = now.toLocaleString('en-US', { weekday: 'short' });
 
         AlrmQueue.forEach((alarm) => {
           const alarmDays = alarm.days || [];
-          // Ensure alarm.time always has seconds for direct comparison
-          const fullAlarmTime = alarm.time.length === 5 ? `${alarm.time}:00` : alarm.time; // Add seconds if missing
+         
+          const fullAlarmTime = alarm.time.length === 5 ? `${alarm.time}:00` : alarm.time; 
 
           const shouldTrigger = alarmDays.length === 0 || alarmDays.includes(currentDay);
 
-          if (fullAlarmTime === timeNow && shouldTrigger) { // Compare full HH:MM:SS
+          if (fullAlarmTime === timeNow && shouldTrigger) { 
             setIsAlarmRunning(true);
             alarmSoundRef.current.play();
           }
@@ -53,21 +55,25 @@ const App = () => {
     return () => clearInterval(interval);
   }, [AlrmQueue, IsAlarmRunning]);
 
+
+  //set alarm
   const setAlarm = (alarmObject) => {
     if (alarmObject && alarmObject.time && alarmObject.note) {
-      // Ensure the time string always includes seconds when adding to queue
+      
       const timeWithSeconds = alarmObject.time.length === 5 ? `${alarmObject.time}:00` : alarmObject.time;
       const alarmWithDays = { ...alarmObject, time: timeWithSeconds, days: alarmObject.days || [] };
       setAlrmQueue(prev => [...prev, alarmWithDays]);
     }
   };
 
+  //verify user
   const handleVerifiedStop = () => {
     setIsAlarmRunning(false);
     alarmSoundRef.current.pause();
     alarmSoundRef.current.currentTime = 0;
   };
 
+  //Get current time
   const getCurrTime = () => {
     const now = new Date();
     const Hours = now.getHours().toString().padStart(2, '0'); // padStart for 2 digits
@@ -77,14 +83,15 @@ const App = () => {
     return timeNow;
   };
 
+  //Check if its morning
   useEffect(() => {
-    // const now = new Date();
-    // const Hours = now.getHours();
-    // if (Hours >= 4 && Hours < 12) {
-    //   setIsMorning(true);
-    // } else {
-    //   setIsMorning(false);
-    // }
+    const now = new Date();
+    const Hours = now.getHours();
+    if (Hours >= 4 && Hours < 12) {
+      setIsMorning(true);
+    } else {
+      setIsMorning(false);
+    }
     setIsMorning(true)
   }, [IsAlarmRunning]);
 

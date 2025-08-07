@@ -58,7 +58,7 @@ const FaceTime = ({ stopAlarm }) => {
     formData.append("type", "sleepiness");
 
     setIsLoading(true);
-    setVerificationStatus("Verifying your face..."); // Status during verification
+    setVerificationStatus("Verifying your face..."); 
 
     try {
       const response = await fetch("https://alarmx-backend.vercel.app/upload-and-analyze", {
@@ -69,15 +69,14 @@ const FaceTime = ({ stopAlarm }) => {
 
       if (result.success) {
         if (result.result.sleepiness < 50) {
-          // User is verified and not sleepy
           setIsVerified(true);
           setVerificationStatus("Good morning! You're all set. Alarm stopping...");
-          // Set a timeout before stopping the alarm
+         
           setTimeout(() => {
             stopAlarm();
-          }, 2000); // 2-second delay
+          }, 2000); 
         } else {
-          // User is detected as sleepy
+          
           setVerificationStatus("You're still sleepy! 😴 Wash your face or try again.");
         }
       } else {
@@ -111,7 +110,6 @@ const FaceTime = ({ stopAlarm }) => {
           {isLoading ? "Verifying..." : "Verify Face"}
         </button>
       ) : (
-        // This message will briefly show before the screen exits due to stopAlarm()
         <div className="mt-4 text-green-600 font-bold text-lg"></div>
       )}
     </div>
