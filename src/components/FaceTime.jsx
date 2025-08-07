@@ -6,6 +6,7 @@ const FaceTime = ({ stopAlarm }) => {
   const [isVerified, setIsVerified] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [verificationStatus, setVerificationStatus] = useState(""); // Renamed for clarity
+  const API = 'https://alarmx-backend.vercel.app/upload-and-analyze'
 
   useEffect(() => {
     const startCamera = async () => {
@@ -61,7 +62,7 @@ const FaceTime = ({ stopAlarm }) => {
     setVerificationStatus("Verifying your face..."); 
 
     try {
-      const response = await fetch("https://alarmx-backend.vercel.app/upload-and-analyze", {
+      const response = await fetch(API, {
         method: "POST",
         body: formData,
       });
