@@ -10,7 +10,7 @@ const App = () => {
   const [repeatDays, setRepeatDays] = useState([]);
   const [AlrmQueue, setAlrmQueue] = useState([]);
   const [IsAlarmRunning, setIsAlarmRunning] = useState(false);
-  const [IsMorning, setIsMorning] = useState(false);
+  const [IsMorning, setIsMorning] = useState(true);
 
   const [Time, setTime] = useState();
   const [AlarmsList, setAlarmsList] = useState([
@@ -83,17 +83,16 @@ const App = () => {
     return timeNow;
   };
 
-  //Check if its morning
-  useEffect(() => {
-    const now = new Date();
-    const Hours = now.getHours();
-    if (Hours >= 4 && Hours < 12) {
-      setIsMorning(true);
-    } else {
-      setIsMorning(false);
-    }
-    setIsMorning(true)
-  }, [IsAlarmRunning]);
+  // Check if its morning
+  // useEffect(() => {
+  //   const now = new Date();
+  //   const Hours = now.getHours();
+  //   if (Hours >= 4 && Hours < 12) {
+  //     setIsMorning(true);
+  //   } else {
+  //     setIsMorning(false);
+  //   }
+  // }, [IsAlarmRunning]);
 
   useEffect(() => {
     const interval = setInterval(() => {
